@@ -1,0 +1,73 @@
+@import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Oswald:wght@500;600;700&display=swap");
+
+@theme {
+  --font-display: "Oswald", sans-serif;
+  --font-sans: "Inter", sans-serif;
+
+  --color-bg-main: #18191e;
+  --color-brand: #b9251c;
+  --color-text-main: #ffffff;
+  --color-text-muted: #9ea3ac;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    background-color: var(--color-bg-main);
+
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+    &::-webkit-scrollbar-track {
+      background: var(--color-bg-main);
+    }
+    &::-webkit-scrollbar-thumb {
+      background: #2c2d35;
+    }
+  }
+
+  body {
+    font-family: var(--font-sans);
+    color: var(--color-text-main);
+    -webkit-font-smoothing: antialiased;
+    background-color: var(--color-bg-main);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display) !important;
+    text-transform: uppercase;
+    color: var(--color-text-main);
+    letter-spacing: 0.03em;
+  }
+}
+
+@layer utilities {
+  .btn-premium {
+    background-color: var(--color-brand);
+    color: #ffffff;
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    transition: all 0.2s ease-in-out;
+  }
+
+  .btn-premium:hover {
+    opacity: 0.9;
+  }
+
+  .ufc-divider {
+    border-bottom: 2px solid var(--color-brand);
+  }
+
+  .burger-line {
+    height: 3px;
+    background-color: var(--color-text-main);
+    border-radius: 1px;
+    transition: all 0.3s ease-in-out;
+  }
+}
