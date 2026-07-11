@@ -52,7 +52,7 @@ export default function Hero() {
               ПЕРШЕ ТРЕНУВАННЯ
             </a>
             <a
-              href="#contacts"
+              href="#prices"
               className="w-full sm:w-auto px-10 py-4 text-base font-bold tracking-widest text-center uppercase font-display border-2 border-white text-white hover:bg-white hover:text-bg-main transition-colors duration-200"
             >
               НАШІ ЦІНИ
