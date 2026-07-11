@@ -1,9 +1,12 @@
 @import "tailwindcss";
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Oswald:wght@500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Alfa+Slab+One&display=swap");
 
 @theme {
   --font-display: "Oswald", sans-serif;
   --font-sans: "Inter", sans-serif;
+  /* Вот так правильно регистрировать шрифт в Tailwind v4 */
+  --font-slab: "Alfa Slab One", serif;
 
   --color-bg-main: #18191e;
   --color-brand: #b9251c;

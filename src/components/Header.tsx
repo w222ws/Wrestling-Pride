@@ -8,7 +8,8 @@ interface NavLink {
 
 const navLinks: NavLink[] = [
   { label: "ПРО НАC", href: "#about" },
-  { label: "ТРЕНЕРИ", href: "#trainers" },
+  { label: "ГРУПИ", href: "#groups" },
+  { label: "ТРЕНЕРИ", href: "#coaches" },
   { label: "ЦІНИ", href: "#prices" },
 ];
 
@@ -21,7 +22,7 @@ export default function Header() {
         <a href="#hero" className="flex items-center h-full">
           <img
             src={logoSvg}
-            alt="Lyon Gym"
+            alt="PRIDE"
             className="h-12 w-auto object-contain brightness-0 invert"
           />
         </a>
