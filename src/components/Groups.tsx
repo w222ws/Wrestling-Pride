@@ -1,4 +1,3 @@
-import React from "react";
 import { Zap, Flame } from "lucide-react";
 
 export default function Groups() {

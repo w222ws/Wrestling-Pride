@@ -1,4 +1,3 @@
-import React from "react";
 import logoSvg from "../assets/logo.svg";
 
 export default function Footer() {
