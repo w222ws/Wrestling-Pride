@@ -10,7 +10,6 @@ const navLinks: NavLink[] = [
   { label: "ПРО НАC", href: "#about" },
   { label: "ГРУПИ", href: "#groups" },
   { label: "ТРЕНЕРИ", href: "#coaches" },
-  { label: "ЦІНИ", href: "#prices" },
 ];
 
 export default function Header() {

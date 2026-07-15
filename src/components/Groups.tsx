@@ -1,41 +1,123 @@
 import { Zap, Flame } from "lucide-react";
+import FadeIn from "./FadeIn";
+import { motion, useMotionTemplate, useMotionValue } from "framer-motion";
+
+// Інтерактивна картка з неоновим тач-слідом
+function MobileFriendlyCard({
+  children,
+  delay,
+}: {
+  children: any;
+  delay: number;
+}) {
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  function handleMouseMove({
+    currentTarget,
+    clientX,
+    clientY,
+  }: React.MouseEvent) {
+    const { left, top } = currentTarget.getBoundingClientRect();
+    mouseX.set(clientX - left);
+    mouseY.set(clientY - top);
+  }
+
+  function handleTouchMove(e: React.TouchEvent) {
+    const touch = e.touches[0];
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = touch.clientX - rect.left;
+    const y = touch.clientY - rect.top;
+    mouseX.set(x);
+    mouseY.set(y);
+  }
+
+  function handleTouchStart(e: React.TouchEvent) {
+    const touch = e.touches[0];
+    const rect = e.currentTarget.getBoundingClientRect();
+    mouseX.set(touch.clientX - rect.left);
+    mouseY.set(touch.clientY - rect.top);
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: 40, filter: "blur(10px)" }}
+      whileInView={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+      viewport={{ once: true, margin: "-80px" }}
+      transition={{ duration: 0.8, delay, ease: [0.16, 1, 0.3, 1] }}
+      className="flex-1 w-full"
+    >
+      <div
+        onMouseMove={handleMouseMove}
+        onTouchMove={handleTouchMove}
+        onTouchStart={handleTouchStart}
+        className="relative group h-full overflow-hidden bg-gradient-to-b from-white/[0.03] to-white/[0.01] p-6 sm:p-8 md:p-12 flex flex-col items-center text-center transition-all duration-300 touch-manipulation border border-brand/20 md:border-white/5 md:hover:border-brand/35 active:scale-[0.97] active:border-brand/40 duration-200"
+      >
+        {/* Spotlight-ефект: працює на всіх пристроях */}
+        <motion.div
+          className="pointer-events-none absolute -inset-px opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-opacity duration-300 z-0"
+          style={{
+            background: useMotionTemplate`
+              radial-gradient(
+                200px circle at ${mouseX}px ${mouseY}px,
+                rgba(239, 68, 68, 0.09),
+                transparent 80%
+              )
+            `,
+          }}
+        />
+
+        <div className="relative z-10 flex flex-col items-center h-full w-full">
+          {children}
+        </div>
+      </div>
+    </motion.div>
+  );
+}
 
 export default function Groups() {
   return (
     <section
       id="groups"
-      className="py-20 md:py-28 bg-bg-main relative overflow-hidden border-t border-white/[0.03]"
+      className="py-20 md:py-32 bg-bg-main relative overflow-hidden border-t border-white/[0.03]"
     >
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-brand/5 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-brand/5 rounded-full blur-[140px] pointer-events-none" />
 
-      <div className="max-w-7xl w-full mx-auto px-6 md:px-12 relative z-10">
-        <div className="mb-16 md:mb-20 text-center max-w-2xl mx-auto flex flex-col items-center">
-          <div className="inline-flex items-center gap-2 bg-white/[0.02] border border-white/10 px-4 py-1.5 rounded-none mb-4">
-            <span className="w-1.5 h-1.5 bg-brand" />
-            <span className="font-display text-xs tracking-widest uppercase text-text-muted font-medium">
-              НАПРЯМКИ ТА ГРУПИ
-            </span>
+      <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 md:px-12 relative z-10">
+        {/* ЗАГОЛОВОК */}
+        <FadeIn>
+          <div className="mb-16 md:mb-24 text-center max-w-2xl mx-auto flex flex-col items-center">
+            <div className="inline-flex items-center gap-2 bg-white/[0.02] border border-white/10 px-4 py-1.5 rounded-none mb-4">
+              <span className="w-1.5 h-1.5 bg-brand" />
+              <span className="font-display text-[10px] sm:text-xs tracking-widest uppercase text-text-muted font-medium">
+                НАПРЯМКИ ТА ГРУПИ
+              </span>
+            </div>
+            <h2 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight uppercase text-white leading-none">
+              ТРЕНУВАЛЬНІ <span className="text-brand">ПРОГРАМИ</span>
+            </h2>
+            <div className="w-12 h-[2px] bg-brand mt-4" />
           </div>
-          <h2 className="text-4xl md:text-5xl font-black tracking-tight uppercase text-white leading-none">
-            ТРЕНУВАЛЬНІ <span className="text-brand">ПРОГРАМИ</span>
-          </h2>
-          <div className="w-12 h-[2px] bg-brand mt-4" />
-        </div>
+        </FadeIn>
 
+        {/* СІТКА З АНІМОВАНИМИ КАРТКАМИ */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-10 max-w-5xl mx-auto items-stretch">
-          <div className="bg-gradient-to-b from-white/[0.03] to-white/[0.01] p-8 md:p-12 flex flex-col items-center text-center relative group transition-all duration-300 touch-manipulation border-brand/20 shadow-[0_4px_20px_rgba(239,68,68,0.02)] md:border-white/5 md:shadow-none md:hover:border-brand/20 active:scale-[0.98] active:border-brand/40">
-            <div className="w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center mb-6 md:mb-8 select-none transition-all duration-300 border-brand/30 bg-brand/5 shadow-[0_0_15px_rgba(239,68,68,0.05)] md:border-white/10 md:bg-white/[0.01] md:shadow-none md:group-hover:border-brand/40 md:group-hover:bg-brand/5 md:group-hover:shadow-[0_0_30px_rgba(239,68,68,0.1)]">
+          {/* КАРТКА 1: PRIDE KIDS */}
+          <MobileFriendlyCard delay={0.1}>
+            {/* КРУГ: На мобільних червоний за замовчуванням, на десктопі сірий і червоніє при ховері */}
+            <div className="w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center mb-6 md:mb-8 select-none transition-all duration-300 border border-brand/30 bg-brand/5 shadow-[0_0_15px_rgba(239,68,68,0.05)] md:border-white/10 md:bg-white/[0.01] md:shadow-none md:group-hover:border-brand/40 md:group-hover:bg-brand/5 md:group-hover:shadow-[0_0_30px_rgba(239,68,68,0.1)]">
               <Zap
-                className="w-9 h-9 md:w-10 md:h-10 transition-colors duration-300 text-brand/90 md:text-white/40 md:group-hover:text-brand"
+                // ІКОНКА: Червона на мобільних, на десктопі сіра і стає червоною при ховері
+                className="w-9 h-9 md:w-10 md:h-10 transition-all duration-300 transform group-hover:scale-115 group-hover:rotate-12 group-active:scale-115 group-active:rotate-12 text-brand md:text-white/40 md:group-hover:text-brand"
                 strokeWidth={1.5}
               />
             </div>
 
             <div className="mb-4">
-              <h3 className="text-2xl md:text-3xl font-bold text-white font-display tracking-wide uppercase mb-2">
+              <h3 className="text-2xl md:text-3xl font-bold text-white font-display tracking-wide uppercase mb-2 md:group-hover:text-brand transition-colors duration-300">
                 PRIDE KIDS
               </h3>
-              <span className="font-sans text-[11px] font-bold tracking-widest text-brand uppercase bg-brand/10 px-3 py-1 inline-block">
+              <span className="font-sans text-[10px] sm:text-[11px] font-bold tracking-widest text-brand uppercase bg-brand/10 px-3 py-1 inline-block">
                 4–13 РОКІВ
               </span>
             </div>
@@ -46,8 +128,9 @@ export default function Groups() {
               та ОФП. Тут дитина вчиться дисципліні та повазі.
             </p>
 
-            <div className="w-full border-t border-white/5 pt-6 md:pt-8 mt-auto max-w-xs">
-              <span className="text-[11px] uppercase tracking-widest text-brand font-bold block mb-4 md:mb-6">
+            {/* РОЗКЛАД */}
+            <div className="w-full border-t border-white/5 pt-6 md:pt-8 mt-auto max-w-xs relative z-20">
+              <span className="text-[10px] sm:text-[11px] uppercase tracking-widest text-brand font-bold block mb-4 md:mb-6">
                 РОЗКЛАД ТРЕНУВАНЬ
               </span>
               <div className="space-y-4">
@@ -69,21 +152,24 @@ export default function Groups() {
                 </div>
               </div>
             </div>
-          </div>
+          </MobileFriendlyCard>
 
-          <div className="bg-gradient-to-b from-white/[0.03] to-white/[0.01] p-8 md:p-12 flex flex-col items-center text-center relative group transition-all duration-300 touch-manipulation border-brand/20 shadow-[0_4px_20px_rgba(239,68,68,0.02)] md:border-white/5 md:shadow-none md:hover:border-brand/20 active:scale-[0.98] active:border-brand/40">
-            <div className="w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center mb-6 md:mb-8 select-none transition-all duration-300 border-brand/30 bg-brand/5 shadow-[0_0_15px_rgba(239,68,68,0.05)] md:border-white/10 md:bg-white/[0.01] md:shadow-none md:group-hover:border-brand/40 md:group-hover:bg-brand/5 md:group-hover:shadow-[0_0_30px_rgba(239,68,68,0.1)]">
+          {/* КАРТКА 2: PRIDE ADULTS */}
+          <MobileFriendlyCard delay={0.2}>
+            {/* КРУГ: На мобільних червоний за замовчуванням, на десктопі сірий і червоніє при ховері */}
+            <div className="w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center mb-6 md:mb-8 select-none transition-all duration-300 border border-brand/30 bg-brand/5 shadow-[0_0_15px_rgba(239,68,68,0.05)] md:border-white/10 md:bg-white/[0.01] md:shadow-none md:group-hover:border-brand/40 md:group-hover:bg-brand/5 md:group-hover:shadow-[0_0_30px_rgba(239,68,68,0.1)]">
               <Flame
-                className="w-9 h-9 md:w-10 md:h-10 transition-colors duration-300 text-brand/90 md:text-white/40 md:group-hover:text-brand"
+                // ІКОНКА: Червона на мобільних, на десктопі сіра і стає червоною при ховері
+                className="w-9 h-9 md:w-10 md:h-10 transition-all duration-300 transform group-hover:scale-115 group-hover:-translate-y-1 group-active:scale-115 group-active:-translate-y-1 text-brand md:text-white/40 md:group-hover:text-brand"
                 strokeWidth={1.5}
               />
             </div>
 
             <div className="mb-4">
-              <h3 className="text-2xl md:text-3xl font-bold text-white font-display tracking-wide uppercase mb-2">
+              <h3 className="text-2xl md:text-3xl font-bold text-white font-display tracking-wide uppercase mb-2 md:group-hover:text-brand transition-colors duration-300">
                 PRIDE ADULTS
               </h3>
-              <span className="font-sans text-[11px] font-bold tracking-widest text-brand uppercase bg-brand/10 px-3 py-1 inline-block">
+              <span className="font-sans text-[10px] sm:text-[11px] font-bold tracking-widest text-brand uppercase bg-brand/10 px-3 py-1 inline-block">
                 14–49+ РОКІВ
               </span>
             </div>
@@ -94,8 +180,9 @@ export default function Groups() {
               навантаження та жорсткий фокус для зняття стресу.
             </p>
 
-            <div className="w-full border-t border-white/5 pt-6 md:pt-8 mt-auto max-w-xs">
-              <span className="text-[11px] uppercase tracking-widest text-brand font-bold block mb-4 md:mb-6">
+            {/* РОЗКЛАД */}
+            <div className="w-full border-t border-white/5 pt-6 md:pt-8 mt-auto max-w-xs relative z-20">
+              <span className="text-[10px] sm:text-[11px] uppercase tracking-widest text-brand font-bold block mb-4 md:mb-6">
                 РОЗКЛАД ТРЕНУВАНЬ
               </span>
               <div className="space-y-4">
@@ -117,7 +204,7 @@ export default function Groups() {
                 </div>
               </div>
             </div>
-          </div>
+          </MobileFriendlyCard>
         </div>
       </div>
     </section>
