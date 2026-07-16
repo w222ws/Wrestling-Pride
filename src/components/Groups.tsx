@@ -1,69 +1,53 @@
 import { Zap, Flame } from "lucide-react";
 import FadeIn from "./FadeIn";
-import { motion, useMotionTemplate, useMotionValue } from "framer-motion";
+import { motion } from "framer-motion";
+import React, { useRef } from "react";
 
-// Інтерактивна картка з неоновим тач-слідом
+// Оптимізована інтерактивна картка з апаратним CSS-світінням
 function MobileFriendlyCard({
   children,
   delay,
 }: {
-  children: any;
+  children: React.ReactNode;
   delay: number;
 }) {
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
+  const cardRef = useRef<HTMLDivElement>(null);
 
-  function handleMouseMove({
-    currentTarget,
-    clientX,
-    clientY,
-  }: React.MouseEvent) {
-    const { left, top } = currentTarget.getBoundingClientRect();
-    mouseX.set(clientX - left);
-    mouseY.set(clientY - top);
-  }
+  // Оновлюємо CSS змінні напряму в DOM, уникаючи ререндерів React
+  function handleMouseMove(e: React.MouseEvent<HTMLDivElement>) {
+    const card = cardRef.current;
+    if (!card) return;
 
-  function handleTouchMove(e: React.TouchEvent) {
-    const touch = e.touches[0];
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = touch.clientX - rect.left;
-    const y = touch.clientY - rect.top;
-    mouseX.set(x);
-    mouseY.set(y);
-  }
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
 
-  function handleTouchStart(e: React.TouchEvent) {
-    const touch = e.touches[0];
-    const rect = e.currentTarget.getBoundingClientRect();
-    mouseX.set(touch.clientX - rect.left);
-    mouseY.set(touch.clientY - rect.top);
+    card.style.setProperty("--mouse-x", `${x}px`);
+    card.style.setProperty("--mouse-y", `${y}px`);
   }
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: 40, filter: "blur(10px)" }}
-      whileInView={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-      viewport={{ once: true, margin: "-80px" }}
-      transition={{ duration: 0.8, delay, ease: [0.16, 1, 0.3, 1] }}
-      className="flex-1 w-full"
+      initial={{ opacity: 0, x: 25 }} // Оптимізовано: без важкого blur() та з меншим зсувом
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ duration: 0.5, delay, ease: [0.16, 1, 0.3, 1] }}
+      className="flex-1 w-full will-change-transform"
     >
       <div
+        ref={cardRef}
         onMouseMove={handleMouseMove}
-        onTouchMove={handleTouchMove}
-        onTouchStart={handleTouchStart}
-        className="relative group h-full overflow-hidden bg-gradient-to-b from-white/[0.03] to-white/[0.01] p-6 sm:p-8 md:p-12 flex flex-col items-center text-center transition-all duration-300 touch-manipulation border border-brand/20 md:border-white/5 md:hover:border-brand/35 active:scale-[0.97] active:border-brand/40 duration-200"
+        className="relative group h-full overflow-hidden bg-gradient-to-b from-white/[0.03] to-white/[0.01] p-6 sm:p-8 md:p-12 flex flex-col items-center text-center border border-brand/20 md:border-white/5 md:hover:border-brand/35 active:scale-[0.98] active:border-brand/40 transition-all duration-300 touch-manipulation"
       >
-        {/* Spotlight-ефект: працює на всіх пристроях */}
-        <motion.div
-          className="pointer-events-none absolute -inset-px opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-opacity duration-300 z-0"
+        {/* ОПТИМІЗОВАНО: Нативний CSS Spotlight на GPU (не рендериться на мобільних, зберігаючи 100% плавність) */}
+        <div
+          className="pointer-events-none absolute -inset-px opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-0 hidden md:block"
           style={{
-            background: useMotionTemplate`
-              radial-gradient(
-                200px circle at ${mouseX}px ${mouseY}px,
-                rgba(239, 68, 68, 0.09),
-                transparent 80%
-              )
-            `,
+            background: `radial-gradient(
+              250px circle at var(--mouse-x, 0px) var(--mouse-y, 0px),
+              rgba(239, 68, 68, 0.08),
+              transparent 80%
+            )`,
           }}
         />
 
@@ -81,13 +65,14 @@ export default function Groups() {
       id="groups"
       className="py-20 md:py-32 bg-bg-main relative overflow-hidden border-t border-white/[0.03]"
     >
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-brand/5 rounded-full blur-[140px] pointer-events-none" />
+      {/* ОПТИМІЗОВАНО: Статичне фонове світіння без JS-анімацій */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-brand/5 rounded-full blur-[140px] pointer-events-none will-change-transform" />
 
       <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 md:px-12 relative z-10">
         {/* ЗАГОЛОВОК */}
         <FadeIn>
           <div className="mb-16 md:mb-24 text-center max-w-2xl mx-auto flex flex-col items-center">
-            <div className="inline-flex items-center gap-2 bg-white/[0.02] border border-white/10 px-4 py-1.5 rounded-none mb-4">
+            <div className="inline-flex items-center gap-2 bg-white/[0.02] border border-white/10 px-4 py-1.5 mb-4">
               <span className="w-1.5 h-1.5 bg-brand" />
               <span className="font-display text-[10px] sm:text-xs tracking-widest uppercase text-text-muted font-medium">
                 НАПРЯМКИ ТА ГРУПИ
@@ -100,15 +85,13 @@ export default function Groups() {
           </div>
         </FadeIn>
 
-        {/* СІТКА З АНІМОВАНИМИ КАРТКАМИ */}
+        {/* СІТКА З КАРТКАМИ */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-10 max-w-5xl mx-auto items-stretch">
           {/* КАРТКА 1: PRIDE KIDS */}
           <MobileFriendlyCard delay={0.1}>
-            {/* КРУГ: На мобільних червоний за замовчуванням, на десктопі сірий і червоніє при ховері */}
             <div className="w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center mb-6 md:mb-8 select-none transition-all duration-300 border border-brand/30 bg-brand/5 shadow-[0_0_15px_rgba(239,68,68,0.05)] md:border-white/10 md:bg-white/[0.01] md:shadow-none md:group-hover:border-brand/40 md:group-hover:bg-brand/5 md:group-hover:shadow-[0_0_30px_rgba(239,68,68,0.1)]">
               <Zap
-                // ІКОНКА: Червона на мобільних, на десктопі сіра і стає червоною при ховері
-                className="w-9 h-9 md:w-10 md:h-10 transition-all duration-300 transform group-hover:scale-115 group-hover:rotate-12 group-active:scale-115 group-active:rotate-12 text-brand md:text-white/40 md:group-hover:text-brand"
+                className="w-9 h-9 md:w-10 md:h-10 transition-all duration-300 transform group-hover:scale-110 group-hover:rotate-12 text-brand md:text-white/40 md:group-hover:text-brand"
                 strokeWidth={1.5}
               />
             </div>
@@ -156,11 +139,9 @@ export default function Groups() {
 
           {/* КАРТКА 2: PRIDE ADULTS */}
           <MobileFriendlyCard delay={0.2}>
-            {/* КРУГ: На мобільних червоний за замовчуванням, на десктопі сірий і червоніє при ховері */}
             <div className="w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center mb-6 md:mb-8 select-none transition-all duration-300 border border-brand/30 bg-brand/5 shadow-[0_0_15px_rgba(239,68,68,0.05)] md:border-white/10 md:bg-white/[0.01] md:shadow-none md:group-hover:border-brand/40 md:group-hover:bg-brand/5 md:group-hover:shadow-[0_0_30px_rgba(239,68,68,0.1)]">
               <Flame
-                // ІКОНКА: Червона на мобільних, на десктопі сіра і стає червоною при ховері
-                className="w-9 h-9 md:w-10 md:h-10 transition-all duration-300 transform group-hover:scale-115 group-hover:-translate-y-1 group-active:scale-115 group-active:-translate-y-1 text-brand md:text-white/40 md:group-hover:text-brand"
+                className="w-9 h-9 md:w-10 md:h-10 transition-all duration-300 transform group-hover:scale-110 group-hover:-translate-y-1 text-brand md:text-white/40 md:group-hover:text-brand"
                 strokeWidth={1.5}
               />
             </div>

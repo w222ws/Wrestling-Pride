@@ -1,35 +1,57 @@
 import { useState } from "react";
-import FadeIn from "./FadeIn";
 import { motion } from "framer-motion";
+import FadeIn from "./FadeIn";
 
 export default function Contacts() {
-  const [copied, setCopied] = useState(false);
+  const [copiedAddress, setCopiedAddress] = useState(false);
+  const [copiedPhone, setCopiedPhone] = useState(false);
   const fullAddress = "Успенська площа, 11, Дніпро";
+  const phoneNumber = "+380964411520";
 
-  const handleCopy = async () => {
+  const handleCopyAddress = async () => {
     try {
       await navigator.clipboard.writeText(fullAddress);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      setCopiedAddress(true);
+      setTimeout(() => setCopiedAddress(false), 2000);
     } catch (err) {
-      console.error("Помилка копіювання:", err);
+      console.error("Помилка копіювання адреси:", err);
+    }
+  };
+
+  const handlePhoneClick = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+    // Якщо користувач на десктопі, замість марного виклику FaceTime/Skype — копіюємо номер телефону
+    if (typeof window !== "undefined" && window.innerWidth >= 1024) {
+      e.preventDefault();
+      try {
+        await navigator.clipboard.writeText(phoneNumber);
+        setCopiedPhone(true);
+        setTimeout(() => setCopiedPhone(false), 2000);
+      } catch (err) {
+        console.error("Помилка копіювання телефону:", err);
+      }
     }
   };
 
   return (
     <section
       id="contacts"
-      className="py-20 md:py-36 bg-bg-main relative overflow-hidden border-t-2 border-white/5"
+      className="py-20 md:py-36 bg-bg-main relative overflow-hidden border-t border-white/[0.04]"
     >
-      {/* Фоновий неон у центрі */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] sm:w-[600px] h-[300px] sm:h-[600px] bg-brand/5 rounded-full blur-[160px] pointer-events-none" />
+      {/* ОПТИМІЗОВАНО: Легкий апаратний неон через CSS-градієнт замість важкого blur-фільтра */}
+      <div
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px] sm:w-[600px] h-[320px] sm:h-[600px] pointer-events-none opacity-40 z-0"
+        style={{
+          background:
+            "radial-gradient(circle, rgba(239, 68, 68, 0.08) 0%, rgba(0,0,0,0) 70%)",
+        }}
+      />
 
       <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 md:px-12 relative z-10">
-        {/* ЗАГОЛОВОК (Плавний вхід) */}
+        {/* ЗАГОЛОВОК */}
         <FadeIn>
           <div className="mb-16 md:mb-24 text-center max-w-3xl mx-auto flex flex-col items-center">
-            <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 px-5 py-2 mb-6">
-              <span className="w-2 h-2 bg-brand animate-pulse" />
+            <div className="inline-flex items-center gap-2 bg-white/[0.03] border border-white/10 px-5 py-2 mb-6">
+              <span className="w-2 h-2 bg-brand rounded-full animate-pulse" />
               <span className="font-display text-xs tracking-widest uppercase text-white font-black">
                 ЗВ'ЯЗОК ТА ЛОКАЦІЯ
               </span>
@@ -43,20 +65,20 @@ export default function Contacts() {
 
         {/* СІТКА КОНТАКТІВ */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 max-w-5xl mx-auto items-stretch">
-          {/* ЛІВА КАРТКА: ЛОКАЦІЯ (Вхід з легким delay 0.1) */}
+          {/* ЛІВА КАРТКА: ЛОКАЦІЯ (Без blur анімацій) */}
           <motion.div
-            initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
-            whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            viewport={{ once: true, margin: "-100px" }}
+            initial={{ opacity: 0, y: 25 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-80px" }}
             transition={{
-              duration: 0.8,
+              duration: 0.6,
               delay: 0.1,
-              ease: [0.215, 0.61, 0.355, 1],
+              ease: [0.16, 1, 0.3, 1],
             }}
-            className="lg:col-span-7 flex w-full"
+            className="lg:col-span-7 flex w-full will-change-transform"
           >
-            <div className="w-full bg-white/[0.01] border-2 border-white/10 hover:border-brand/35 p-6 sm:p-8 md:p-10 flex flex-col justify-between relative h-auto transition-all duration-300">
-              <div className="absolute top-0 right-0 bg-white/5 px-4 py-1 text-[9px] font-black tracking-widest text-text-muted uppercase border-b border-l border-white/10">
+            <div className="w-full bg-white/[0.01] border border-white/10 hover:border-brand/35 p-6 sm:p-8 md:p-10 flex flex-col justify-between relative h-auto transition-all duration-300">
+              <div className="absolute top-0 right-0 bg-white/5 px-4 py-1.5 text-[9px] font-black tracking-widest text-text-muted uppercase border-b border-l border-white/10">
                 ДНІПРО
               </div>
 
@@ -120,15 +142,15 @@ export default function Contacts() {
               {/* Кнопка скопіювати */}
               <div className="mt-10 pt-6 border-t border-white/10">
                 <button
-                  onClick={handleCopy}
-                  className={`w-full py-4 text-xs font-black tracking-widest uppercase transition-all duration-300 border active:scale-[0.97] ${
-                    copied
+                  onClick={handleCopyAddress}
+                  className={`w-full py-4 text-xs font-black tracking-widest uppercase transition-all duration-300 border active:scale-[0.97] touch-manipulation will-change-transform ${
+                    copiedAddress
                       ? "bg-white text-black border-white"
                       : "bg-transparent border-white/20 text-white md:hover:bg-white md:hover:text-black md:hover:border-white"
                   }`}
                 >
                   <span>
-                    {copied
+                    {copiedAddress
                       ? "АДРЕСУ ЗБЕРЕЖЕНО В БУФЕР ✓"
                       : "СКОПІЮВАТИ АДРЕСУ"}
                   </span>
@@ -137,21 +159,21 @@ export default function Contacts() {
             </div>
           </motion.div>
 
-          {/* ПРАВА КОЛОНКА: ДЗВІНОК ТА НАВІГАЦІЯ */}
+          {/* ПРАВА КОЛОНКА */}
           <div className="lg:col-span-5 flex flex-col gap-6 h-auto justify-between w-full">
-            {/* КАРТКА 2: ЗАТЕЛЕФОНУВАТИ (delay 0.2) */}
+            {/* КАРТКА 2: ЗАТЕЛЕФОНУВАТИ */}
             <motion.div
-              initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
-              whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              viewport={{ once: true, margin: "-100px" }}
+              initial={{ opacity: 0, y: 25 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
               transition={{
-                duration: 0.8,
+                duration: 0.6,
                 delay: 0.2,
-                ease: [0.215, 0.61, 0.355, 1],
+                ease: [0.16, 1, 0.3, 1],
               }}
-              className="flex-1 flex w-full"
+              className="flex-1 flex w-full will-change-transform"
             >
-              <div className="w-full bg-gradient-to-b from-brand/[0.08] to-transparent border-2 border-brand p-6 sm:p-8 flex flex-col justify-between shadow-[0_0_60px_rgba(239,68,68,0.07)] text-center lg:text-left transition-all duration-300">
+              <div className="w-full bg-gradient-to-b from-brand/[0.06] to-transparent border border-brand p-6 sm:p-8 flex flex-col justify-between shadow-[0_0_50px_rgba(239,68,68,0.05)] text-center lg:text-left transition-all duration-300">
                 <div className="mb-6">
                   <span className="text-[10px] font-black tracking-widest text-brand uppercase block mb-1">
                     ШВИДКИЙ ЗАПИС
@@ -160,35 +182,42 @@ export default function Contacts() {
                     ЗАТЕЛЕФОНУВАТИ
                   </h4>
                   <p className="text-xs text-white/40 mt-1">
-                    Прямий зв'язок з тренером для запису
+                    {copiedPhone
+                      ? "Номер скопійовано у буфер!"
+                      : "Прямий зв'язок з тренером для запису"}
                   </p>
                 </div>
 
                 <a
-                  href="tel:+380964411520"
-                  className="w-full bg-brand text-white py-4 px-4 text-base font-black tracking-widest uppercase transition-all duration-300 md:hover:bg-brand/90 flex items-center justify-center gap-3 shadow-lg active:scale-[0.97]"
+                  href={`tel:${phoneNumber}`}
+                  onClick={handlePhoneClick}
+                  className={`w-full py-4 px-4 text-base font-black tracking-widest uppercase transition-all duration-300 flex items-center justify-center gap-3 shadow-lg active:scale-[0.97] touch-manipulation will-change-transform ${
+                    copiedPhone
+                      ? "bg-white text-black"
+                      : "bg-brand text-white md:hover:bg-brand/90"
+                  }`}
                 >
                   <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
                     <path d="M20 15.5c-1.2 0-2.4-.2-3.6-.6-.3-.1-.7 0-1 .2l-2.2 2.2c-2.8-1.4-5.1-3.8-6.6-6.6l2.2-2.2c.3-.3.4-.7.2-1-.3-1.1-.5-2.3-.5-3.5 0-.6-.4-1-1-1H4c-.6 0-1 .4-1 1 0 9.4 7.6 17 17 17 .6 0 1-.4 1-1v-3.5c0-.6-.4-1-1-1z" />
                   </svg>
-                  +38 (096) 441-15-20
+                  {copiedPhone ? "НОМЕР СКОПІЙОВАНО ✓" : "+38 (096) 441-15-20"}
                 </a>
               </div>
             </motion.div>
 
-            {/* КАРТКА 3: НАВІГАЦІЯ (delay 0.3) */}
+            {/* КАРТКА 3: НАВІГАЦІЯ */}
             <motion.div
-              initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
-              whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              viewport={{ once: true, margin: "-100px" }}
+              initial={{ opacity: 0, y: 25 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
               transition={{
-                duration: 0.8,
+                duration: 0.6,
                 delay: 0.3,
-                ease: [0.215, 0.61, 0.355, 1],
+                ease: [0.16, 1, 0.3, 1],
               }}
-              className="flex-1 flex w-full"
+              className="flex-1 flex w-full will-change-transform"
             >
-              <div className="w-full bg-white/[0.01] border-2 border-white/10 md:hover:border-white/30 p-6 sm:p-8 flex flex-col justify-between text-center lg:text-left transition-all duration-300">
+              <div className="w-full bg-white/[0.01] border border-white/10 md:hover:border-white/30 p-6 sm:p-8 flex flex-col justify-between text-center lg:text-left transition-all duration-300">
                 <div className="mb-6">
                   <span className="text-[10px] font-black tracking-widest text-text-muted uppercase block mb-1">
                     НАВІГАЦІЯ В ДОДАТКУ
@@ -205,7 +234,7 @@ export default function Contacts() {
                   href="https://maps.app.goo.gl/FTtTpAuuja2CquwQ8"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full bg-transparent border-2 border-white text-white text-center py-4 text-xs font-black tracking-widest uppercase transition-all duration-300 md:hover:bg-white md:hover:text-black block active:scale-[0.97]"
+                  className="w-full bg-transparent border border-white text-white text-center py-4 text-xs font-black tracking-widest uppercase transition-all duration-300 md:hover:bg-white md:hover:text-black block active:scale-[0.97] touch-manipulation will-change-transform"
                 >
                   ПРОКЛАСТИ МАРШРУТ
                 </a>

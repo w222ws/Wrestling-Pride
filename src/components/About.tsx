@@ -7,19 +7,8 @@ export default function About() {
       id="about"
       className="py-20 md:py-32 bg-bg-main relative overflow-hidden border-t border-white/[0.03]"
     >
-      {/* М'яке кінематографічне фонове світіння (пульсуюче) */}
-      <motion.div
-        animate={{
-          scale: [1, 1.15, 1],
-          opacity: [0.15, 0.25, 0.15],
-        }}
-        transition={{
-          duration: 8,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-        className="absolute top-0 left-1/3 w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-brand/5 rounded-full blur-[130px] pointer-events-none"
-      />
+      {/* ОПТИМИЗИРОВАНО: М'яке кінематографічне фонове світіння (статичне, на GPU) */}
+      <div className="absolute top-0 left-1/3 w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-brand/5 rounded-full blur-[130px] pointer-events-none opacity-20 will-change-transform" />
 
       <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 md:px-12 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-stretch">
@@ -80,19 +69,19 @@ export default function About() {
             </FadeIn>
           </div>
 
-          {/* ПРАВАЯ КОЛОНКА (Анімована, без помилок типізації) */}
+          {/* ПРАВАЯ КОЛОНКА (ОПТИМИЗИРОВАНА: убрали blur-эффект, перенесли анимацию на GPU) */}
           <div className="lg:col-span-5 flex flex-col gap-5 sm:gap-6 justify-between w-full">
             {/* КАРТКА 1: ЕКСПЕРТНІСТЬ */}
             <motion.div
-              initial={{ opacity: 0, x: 50, filter: "blur(8px)" }}
-              whileInView={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-              viewport={{ once: true, margin: "-100px" }}
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
               transition={{
-                duration: 0.8,
+                duration: 0.6,
                 delay: 0.1,
                 ease: [0.16, 1, 0.3, 1],
               }}
-              className="flex-1"
+              className="flex-1 will-change-transform"
             >
               <div className="bg-gradient-to-r from-white/[0.01] to-transparent border border-white/5 p-6 relative group hover:border-brand/25 transition-all duration-500 h-full flex flex-col justify-center active:scale-[0.99] touch-manipulation">
                 <div className="text-xl sm:text-2xl font-bold text-white mb-1 font-display tracking-wide uppercase group-hover:text-brand md:group-hover:translate-x-1 transition-all duration-300">
@@ -111,15 +100,15 @@ export default function About() {
 
             {/* КАРТКА 2: КОМ’ЮНІТІ */}
             <motion.div
-              initial={{ opacity: 0, x: 50, filter: "blur(8px)" }}
-              whileInView={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-              viewport={{ once: true, margin: "-100px" }}
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
               transition={{
-                duration: 0.8,
+                duration: 0.6,
                 delay: 0.2,
                 ease: [0.16, 1, 0.3, 1],
               }}
-              className="flex-1"
+              className="flex-1 will-change-transform"
             >
               <div className="bg-gradient-to-r from-white/[0.01] to-transparent border border-white/5 p-6 relative group hover:border-brand/25 transition-all duration-500 h-full flex flex-col justify-center active:scale-[0.99] touch-manipulation">
                 <div className="text-xl sm:text-2xl font-bold text-white mb-1 font-display tracking-wide uppercase group-hover:text-brand md:group-hover:translate-x-1 transition-all duration-300">
@@ -138,15 +127,15 @@ export default function About() {
 
             {/* КАРТКА 3: ІНФРАСТРУКТУРА */}
             <motion.div
-              initial={{ opacity: 0, x: 50, filter: "blur(8px)" }}
-              whileInView={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-              viewport={{ once: true, margin: "-100px" }}
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
               transition={{
-                duration: 0.8,
+                duration: 0.6,
                 delay: 0.3,
                 ease: [0.16, 1, 0.3, 1],
               }}
-              className="flex-1"
+              className="flex-1 will-change-transform"
             >
               <div className="bg-gradient-to-r from-white/[0.01] to-transparent border border-white/5 p-6 relative group hover:border-brand/25 transition-all duration-500 h-full flex flex-col justify-center active:scale-[0.99] touch-manipulation">
                 <div className="text-xl sm:text-2xl font-bold text-white mb-1 font-display tracking-wide uppercase group-hover:text-brand md:group-hover:translate-x-1 transition-all duration-300">

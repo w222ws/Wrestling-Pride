@@ -12,36 +12,33 @@ function App() {
   useEffect(() => {
     const handleAnchorClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      // Знаходимо найближчий тег <a> (це рятує, якщо клікнули на іконку чи спан всередині посилання)
       const anchor = target.closest("a");
 
-      // Перевіряємо, чи це внутрішнє якірне посилання на нашому ж сайті
       if (anchor && anchor.hash && anchor.origin === window.location.origin) {
         const targetElement = document.getElementById(anchor.hash.slice(1));
 
         if (targetElement) {
-          e.preventDefault(); // Відміняємо різкий дефолтний стрибок браузера
+          e.preventDefault();
 
           targetElement.scrollIntoView({
-            behavior: "smooth", // М'яка анімація ковзання
-            block: "start", // Рівняємо верхній край секції до верху екрана
+            behavior: "smooth",
+            block: "start",
           });
         }
       }
     };
 
-    // Вішаємо один легкий слухач подій на весь документ
     document.addEventListener("click", handleAnchorClick);
-
-    // Чистимо за собою при розмонтуванні компонента (good practice)
     return () => document.removeEventListener("click", handleAnchorClick);
   }, []);
 
   return (
-    <div className="min-h-screen bg-bg-main text-text-main antialiased font-sans selection:bg-brand selection:text-bg-main">
+    /* Добавили w-full и overflow-x-hidden, чтобы на телефонах гарантированно убрать любые зазоры по бокам */
+    <div className="min-h-screen w-full bg-bg-main text-text-main antialiased font-sans selection:bg-brand selection:text-bg-main overflow-x-hidden m-0 p-0">
       <Header />
 
-      <main className="pt-20">
+      {/* УБРАЛИ pt-20! Теперь main чистый, и Hero летит под самый верх хедера */}
+      <main className="w-full m-0 p-0">
         <Hero />
         <About />
         <Groups />
