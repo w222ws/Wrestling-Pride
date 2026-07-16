@@ -90,7 +90,7 @@ export default function Coaches() {
           {/* ТРЕНЕР 1: ОЛЕКСІЙ НЕЧЕПУРЕНКО */}
           <CoachCard delay={0.1}>
             <img
-              src="/coach1.avif"
+              src="/coach1 (2).avif"
               alt="Олексій Нечепуренко"
               className="w-full h-full object-cover contrast-[1.1] brightness-90 md:grayscale md:brightness-75 md:group-hover:grayscale-0 md:group-hover:scale-105 md:group-hover:brightness-100 transition-all duration-700 ease-out"
             />
@@ -125,7 +125,7 @@ export default function Coaches() {
           {/* ТРЕНЕР 2: ОЛЕКСАНДР СИДОРЕНКО (Зміщений вниз на десктопі `md:translate-y-20`) */}
           <CoachCard delay={0.2} className="md:translate-y-20">
             <img
-              src="/coach2.avif"
+              src="/coach2 (1).avif"
               alt="Олександр Сидоренко"
               className="w-full h-full object-cover contrast-[1.1] brightness-90 md:grayscale md:brightness-75 md:group-hover:grayscale-0 md:group-hover:scale-105 md:group-hover:brightness-100 transition-all duration-700 ease-out"
             />
