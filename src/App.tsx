@@ -4,6 +4,7 @@ import Hero from "./components/Hero";
 import About from "./components/About";
 import Groups from "./components/Groups";
 import Coaches from "./components/Coaches";
+import Gallery from "./components/Gallery";
 import Contacts from "./components/Contacts";
 import Footer from "./components/Footer";
 
@@ -43,6 +44,7 @@ function App() {
         <About />
         <Groups />
         <Coaches />
+        <Gallery />
         <Contacts />
         <Footer />
       </main>
